@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${book.title}"/>
+    <style>
+        body {
+            background-color: grey;
+        }
+    </style>
+</head>
+<body>
+<tr th:object="${book}">
+    <td th:text="${bookInfo}"/>
+    <br/>
+    <hr/>
+
+    <td th:text="${bookAvailability}"/>
+
+    <td th:unless="${isIssued}">
+        <form th:method="POST" th:action="@{/book/${book.id}/giveout}">
+            <label>Choose a person</label>
+            <select th:object="${person}" th:field="*{id}" id="person">
+                <option th:each="person : ${personList}" th:value="${person.id}"
+                        th:text="${person.fullName}"/>
+            </select>
+            <input value="Give out" type="submit">
+        </form>
+    </td>
+
+    <hr/>
+    <form th:method="GET" th:object="${book}" th:action="@{/book/{id}/edit (id=*{id})}">
+        <input value="Edit" type="submit">
+    </form>
+
+
+    <form th:method="DELETE" th:object="${book}" th:action="@{/book/{id} (id=*{id})}">
+        <input value="Delete" type="submit">
+    </form>
+</tr>
+</body>
+</html>
