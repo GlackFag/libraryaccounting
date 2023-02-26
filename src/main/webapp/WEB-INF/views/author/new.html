@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add an author</title>
+    <style>
+        body {
+            background-color: grey;
+        }
+    </style>
+</head>
+<body>
+<form th:method="POST" th:action="@{/author}" th:object="${author}">
+    <label for="title">Enter full author's name</label>
+    <input type="text" id="title" name="title" th:field="${author.name}">
+    <br/>
+    <input type="submit" value="Add an author">
+</form>
+</body>
+</html>

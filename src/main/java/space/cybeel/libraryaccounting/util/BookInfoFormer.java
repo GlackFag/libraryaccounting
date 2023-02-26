@@ -20,4 +20,11 @@ public class BookInfoFormer {
 
         return String.format("%s - %s %d", author.getName(), title, book.getYear());
     }
+
+    public static List<String> form(List<Book> books){
+        return books.stream().map(x -> String.format("%s %d", x.getTitle(), x.getYear())).toList();
+    }
+
+    private BookInfoFormer() {
+    }
 }

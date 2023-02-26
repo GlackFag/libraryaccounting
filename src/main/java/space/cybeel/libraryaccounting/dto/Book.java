@@ -1,6 +1,5 @@
 package space.cybeel.libraryaccounting.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -26,6 +25,10 @@ public class Book extends DataTransferObject{
     @Getter
     @Setter
     private String takenBy;
+
+    @Getter
+    @Setter
+    private String formedInfo;
 
     public Book(int year, int authorId, String title, int id, String takenBy) {
         this.year = year;

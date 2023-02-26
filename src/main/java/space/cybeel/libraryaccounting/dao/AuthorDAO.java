@@ -31,7 +31,7 @@ public class AuthorDAO extends DataAccesObject<Author> {
             statement.setString(1, obj.getName());
 
             statement.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -48,7 +48,7 @@ public class AuthorDAO extends DataAccesObject<Author> {
 
             if (resultSet.next())
                 return parseAuthor(resultSet);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Author.UNKNOWN_AUTHOR;
@@ -66,29 +66,43 @@ public class AuthorDAO extends DataAccesObject<Author> {
             while (resultSet.next()) {
                 try {
                     result.add(parseAuthor(resultSet));
-                } catch (Exception ignored) {
+                } catch (SQLException ignored) {
                 }
             }
 
             return result;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return Collections.emptyList();
     }
 
     @Override
-    @SneakyThrows
     public void delete(int id) {
-        PreparedStatement statement =
-                connection.prepareStatement("DELETE FROM author WHERE id=?");
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("DELETE FROM author WHERE id=?");
 
-        statement.executeUpdate();
+            statement.setInt(1, id);
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void update(int id, Author updated) {
-        //todo
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("UPDATE author SET name=? WHERE id=?");
+            statement.setString(1, updated.getName());
+            statement.setInt(2, updated.getId());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

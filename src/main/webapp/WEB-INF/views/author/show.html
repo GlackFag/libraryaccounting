@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${author.name}"/>
+        <style>
+            body {
+                background-color: grey;
+            }
+        </style>
+</head>
+<body>
+<b th:text="${author.name}"/>
+<br/>
+
+    <div th:if="${not #lists.isEmpty(bookList)}">
+        <b th:text="${author.name} + '\'s books:'"/>
+<table>
+    <tr th:each="book : ${bookList}">
+        <td>
+            <a th:href="@{/book/{id}(id=${book.id})}">
+                <span th:text="${book.getFormedInfo().replaceAll('\\d', '')}"/>
+            </a>
+        </td>
+    </tr>
+</table>
+    </div>
+
+    <div th:if="${#lists.isEmpty(bookList)}">
+        <b>No books found.</b>
+    </div>
+<hr/>
+
+<form th:method="DELETE" th:action="@{/author/{id} (id=${author.id})}">
+    <input type="submit" value="Delete">
+</form>
+
+<a th:href="@{/book/new}">Add a book</a>
+</body>
+</html>
