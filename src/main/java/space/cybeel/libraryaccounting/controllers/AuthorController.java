@@ -23,7 +23,6 @@ public class AuthorController {
         this.authorDAO = authorDAO;
         this.bookDAO = bookDAO;
     }
-
     @GetMapping("/new")
     public String addPage(Model model) {
         model.addAttribute("author", new Author());
@@ -58,7 +57,7 @@ public class AuthorController {
     @PostMapping({"/", ""})
     public String add(@ModelAttribute("author") Author author) {
         authorDAO.save(author);
-
+        //todo change mapping address as in other controllers
         return "redirect:/author";
     }
 

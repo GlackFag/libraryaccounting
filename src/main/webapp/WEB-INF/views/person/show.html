@@ -2,9 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title/>
+    <title th:text="${person.fullName}"></title>
 </head>
 <body>
 
+<b th:text="${person.fullName}"></b>
+
+<div>
+    <div th:if="${not #lists.isEmpty(issuedBookList)}">
+        <hr/>
+        <b>Given out books:</b>
+        <ul th:each="book : ${issuedBookList}">
+            <li>
+                <a th:href="@{/book/{id} (id=${book.id})}">
+                    <span th:text="${book.formedInfo}"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div th:if="${#lists.isEmpty(issuedBookList)}">
+        <span>This person has not taken any books yet.</span>
+    </div>
+</div>
+
+<hr/>
+
+<div>
+    <form th:method="GET" th:action="@{/person/{id}/edit (id=${person.id})}">
+        <input type="submit" value="Edit">
+    </form>
+
+    <form th:method="DELETE" th:action="@{/person/{id}(id=${person.id})}">
+        <input type="submit" value="Delete">
+    </form>
+</div>
 </body>
 </html>

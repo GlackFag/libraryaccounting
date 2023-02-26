@@ -20,6 +20,7 @@
         <td>
             <a th:href="@{/book/{id}(id=${book.id})}">
                 <span th:text="${book.getFormedInfo().replaceAll('\\d', '')}"/>
+<!--                todo убрать имя из отоборажение названия-->
             </a>
         </td>
     </tr>

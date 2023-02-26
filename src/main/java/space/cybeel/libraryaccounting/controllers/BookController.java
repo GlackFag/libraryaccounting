@@ -33,6 +33,20 @@ public class BookController {
         this.bookDAO = bookDAO;
         this.personDAO = personDAO;
     }
+//todo выдача книг
+
+    @GetMapping("/{id}/edit")
+    public String editPage(@PathVariable("id") int id, Model model) {
+        model.addAttribute("book", bookDAO.show(id));
+
+        return "book/edit";
+    }
+
+    @GetMapping("/new")
+    public String addPage(Model model) {
+        model.addAttribute("book", new Book());
+        return "book/new";
+    }
 
     @GetMapping({"/", ""})
     public String index(Model model) {
@@ -51,24 +65,11 @@ public class BookController {
         return "redirect:/book";
     }
 
-    @GetMapping("/{id}/edit")
-    public String editPage(@PathVariable("id") int id, Model model) {
-        model.addAttribute("book", bookDAO.show(id));
-
-        return "book/edit";
-    }
-
     @PostMapping({"/", ""})
     public String add(@ModelAttribute("book") Book book) {
         bookDAO.save(book);
 
         return "redirect:/book";
-    }
-
-    @GetMapping("/new")
-    public String addPage(Model model) {
-        model.addAttribute("book", new Book());
-        return "book/new";
     }
 
     @DeleteMapping("/{id}")

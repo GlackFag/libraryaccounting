@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import space.cybeel.libraryaccounting.dto.Author;
+import space.cybeel.libraryaccounting.dto.Book;
 import space.cybeel.libraryaccounting.util.DTOList;
 
 import java.sql.Connection;
@@ -22,6 +23,14 @@ public class AuthorDAO extends DataAccesObject<Author> {
         super(connection);
     }
 
+    public void initAuthors(List<? extends Book> books) {
+        if (books.isEmpty())
+            return;
+        DTOList<Author> authors = (DTOList<Author>) index();
+
+        books.forEach(x -> x.setAuthor(authors.getByIdOrDefault(x.getId(), Author.UNKNOWN_AUTHOR)));
+    }
+
     @Override
     public void save(Author obj) {
         try {
@@ -35,7 +44,6 @@ public class AuthorDAO extends DataAccesObject<Author> {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public Author show(int id) {

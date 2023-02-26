@@ -10,25 +10,25 @@
     </style>
 </head>
 <body>
-<tr th:object="${book}">
-    <td th:text="${bookInfo}"/>
-    <br/>
-    <hr/>
 
-    <td th:text="${bookAvailability}"/>
+<span th:text="${bookInfo}"></span>
+<hr/>
+<span th:text="${bookAvailability}"></span>
 
-    <td th:unless="${isIssued}">
-        <form th:method="POST" th:action="@{/book/${book.id}/giveout}">
-            <label>Choose a person</label>
-            <select th:object="${person}" th:field="*{id}" id="person">
-                <option th:each="person : ${personList}" th:value="${person.id}"
-                        th:text="${person.fullName}"/>
-            </select>
-            <input value="Give out" type="submit">
-        </form>
-    </td>
+<div th:unless="${isIssued}">
+    <form th:method="POST" th:object="${person}"
+          th:action="@{/book/{bookId}/giveout/{personId} (bookId = ${book.id}, personId=${person.id})}">
+        <label>Choose a person</label>
+        <select th:field="*{id}" id="person">
+            <option th:each="person : ${personList}" th:value="${person.id}"
+                    th:text="${person.fullName}"/>
+        </select>
+        <input value="Give out" type="submit">
+    </form>
+</div>
 
-    <hr/>
+<hr/>
+<div>
     <form th:method="GET" th:object="${book}" th:action="@{/book/{id}/edit (id=*{id})}">
         <input value="Edit" type="submit">
     </form>
@@ -37,6 +37,6 @@
     <form th:method="DELETE" th:object="${book}" th:action="@{/book/{id} (id=*{id})}">
         <input value="Delete" type="submit">
     </form>
-</tr>
+</div>
 </body>
 </html>

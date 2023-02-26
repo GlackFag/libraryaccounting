@@ -2,16 +2,27 @@ package space.cybeel.libraryaccounting.dao;
 
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
+import space.cybeel.libraryaccounting.dto.Book;
+import space.cybeel.libraryaccounting.dto.IssuedBook;
+import space.cybeel.libraryaccounting.dto.Person;
+import space.cybeel.libraryaccounting.util.DTOList;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Component
-public class IssuedBookDAO extends DataAccesObject {
-    public IssuedBookDAO(Connection connection) {
+public class IssuedBookDAO extends DataAccesObject<IssuedBook> {
+    private final BookDAO bookDAO;
+
+    private final PersonDAO personDAO;
+
+    public IssuedBookDAO(Connection connection, BookDAO bookDAO, PersonDAO personDAO) {
         super(connection);
+        this.bookDAO = bookDAO;
+        this.personDAO = personDAO;
     }
 
     @SneakyThrows
@@ -50,7 +61,7 @@ public class IssuedBookDAO extends DataAccesObject {
     @SneakyThrows
     public int getIssuerId(int bookId) {
         PreparedStatement statement =
-                connection.prepareStatement("SELECT * FROM issuedBook WHERE bookId=?");
+                connection.prepareStatement("SELECT personId FROM issuedBook WHERE bookId=?");
 
         statement.setInt(1, bookId);
         ResultSet resultSet = statement.executeQuery();
@@ -60,16 +71,48 @@ public class IssuedBookDAO extends DataAccesObject {
     }
 
     @SneakyThrows
-    public String getIssuerName(int bookId){
+    public String getIssuerName(int bookId) {
         PreparedStatement statement =
-                connection.prepareStatement("SELECT * FROM person WHERE id=?");
-
-        statement.setInt(1, getIssuerId(bookId));
+                connection.prepareStatement("SELECT name FROM person WHERE id=(SELECT personId FROM issuedBook WHERE bookId=?)");
+        //TODO TEST
+        statement.setInt(1, bookId);
 
         ResultSet resultSet = statement.executeQuery();
         resultSet.next();
 
         return resultSet.getString("name");
+    }
+
+
+    @Override
+    public List<IssuedBook> index() {
+        List<IssuedBook> issuedBooks = new DTOList<>();
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("SELECT * FROM issuedBook");
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                DTOList<Book> books = (DTOList<Book>) bookDAO.index();
+                DTOList<Person> people = (DTOList<Person>) personDAO.index();
+
+                books.forEach(IssuedBook::new);
+                do {
+                    int bookId = resultSet.getInt("id");
+                    IssuedBook ib = (IssuedBook) books.getByIdOrNull(bookId);
+
+                    ib.setIssuer(people.getByIdOrNull(resultSet.getInt("personId")));
+
+                    issuedBooks.add(ib);
+                } while (resultSet.next());
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return issuedBooks;
     }
 
     @Override
@@ -78,17 +121,12 @@ public class IssuedBookDAO extends DataAccesObject {
     }
 
     @Override
-    public void save(Object obj) {
+    public void save(IssuedBook obj) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object show(int id) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List index() {
+    public IssuedBook show(int id) {
         throw new UnsupportedOperationException();
     }
 
@@ -98,7 +136,8 @@ public class IssuedBookDAO extends DataAccesObject {
     }
 
     @Override
-    public void update(int id, Object updated) {
+    public void update(int id, IssuedBook updated) {
         throw new UnsupportedOperationException();
     }
+
 }

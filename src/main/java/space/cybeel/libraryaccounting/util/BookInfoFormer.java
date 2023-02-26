@@ -6,7 +6,7 @@ import space.cybeel.libraryaccounting.dto.Book;
 import java.util.List;
 
 public class BookInfoFormer {
-    public static List<String> form(List<Book> books, DTOList<Author> authors) {
+    public static List<String> form(List<? extends Book> books, DTOList<Author> authors) {
         return books.stream().map(x -> form(x, authors)).toList();
     }
 
@@ -18,11 +18,11 @@ public class BookInfoFormer {
     public static String form(Book book, Author author) {
         String title = book.getTitle();
 
-        return String.format("%s - %s %d", author.getName(), title, book.getYear());
+        return String.format("%s - %s, %d", author.getName(), title, book.getYear());
     }
 
-    public static List<String> form(List<Book> books){
-        return books.stream().map(x -> String.format("%s %d", x.getTitle(), x.getYear())).toList();
+    public static List<String> formWithoutAuthor(List<? extends Book> books){
+        return books.stream().map(x -> String.format("%s, %d", x.getTitle(), x.getYear())).toList();
     }
 
     private BookInfoFormer() {

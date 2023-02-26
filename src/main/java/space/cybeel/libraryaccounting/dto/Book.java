@@ -16,6 +16,10 @@ public class Book extends DataTransferObject{
 
     @Getter
     @Setter
+    private Author author;
+
+    @Getter
+    @Setter
     private String title;
 
     @Setter
@@ -24,18 +28,13 @@ public class Book extends DataTransferObject{
 
     @Getter
     @Setter
-    private String takenBy;
-
-    @Getter
-    @Setter
     private String formedInfo;
 
-    public Book(int year, int authorId, String title, int id, String takenBy) {
+    public Book(int year, int authorId, String title, int id) {
         this.year = year;
         this.authorId = authorId;
         this.title = title;
         this.id = id;
-        this.takenBy = takenBy;
     }
 
     public Book() {
