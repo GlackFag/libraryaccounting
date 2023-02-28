@@ -17,13 +17,19 @@
 
 <div th:unless="${isIssued}">
     <form th:method="POST" th:object="${person}"
-          th:action="@{/book/{bookId}/giveout/{personId} (bookId = ${book.id}, personId=${person.id})}">
-        <label>Choose a person</label>
+          th:action="@{/book/{bookId}/giveout (bookId = ${book.id})}">
+        <label for="person">Choose a person</label>
         <select th:field="*{id}" id="person">
             <option th:each="person : ${personList}" th:value="${person.id}"
                     th:text="${person.fullName}"/>
         </select>
         <input value="Give out" type="submit">
+    </form>
+</div>
+
+<div th:if="${isIssued}">
+    <form th:method="POST" th:action="@{/book/{bookId}/giveback (bookId=${book.id})}">
+        <input value="Give back" type="submit">
     </form>
 </div>
 

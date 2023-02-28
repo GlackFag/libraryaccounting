@@ -7,7 +7,6 @@ import lombok.ToString;
 @ToString
 public class IssuedBook extends Book {
     @Getter
-    @Setter
     private Person issuer;
 
     @Getter
@@ -25,5 +24,10 @@ public class IssuedBook extends Book {
 
     public IssuedBook() {
         super();
+    }
+
+    public void setIssuer(Person issuer) {
+        this.issuer = issuer;
+        setIssuerId(issuer.getId());
     }
 }

@@ -73,14 +73,13 @@ public class IssuedBookDAO extends DataAccesObject<IssuedBook> {
     @SneakyThrows
     public String getIssuerName(int bookId) {
         PreparedStatement statement =
-                connection.prepareStatement("SELECT name FROM person WHERE id=(SELECT personId FROM issuedBook WHERE bookId=?)");
-        //TODO TEST
+                connection.prepareStatement("SELECT fullname FROM person WHERE id=(SELECT personId FROM issuedBook WHERE bookId=?)");
         statement.setInt(1, bookId);
 
         ResultSet resultSet = statement.executeQuery();
         resultSet.next();
 
-        return resultSet.getString("name");
+        return resultSet.getString("fullname");
     }
 
 
@@ -99,10 +98,11 @@ public class IssuedBookDAO extends DataAccesObject<IssuedBook> {
 
                 books.forEach(IssuedBook::new);
                 do {
-                    int bookId = resultSet.getInt("id");
-                    IssuedBook ib = (IssuedBook) books.getByIdOrNull(bookId);
+                    int bookId = resultSet.getInt("bookId");
+                    IssuedBook ib = new IssuedBook(books.getByIdOrNull(bookId));
 
-                    ib.setIssuer(people.getByIdOrNull(resultSet.getInt("personId")));
+                    int personId = resultSet.getInt("personId");
+                    ib.setIssuer(people.getByIdOrNull(personId));
 
                     issuedBooks.add(ib);
                 } while (resultSet.next());

@@ -17,7 +17,8 @@
 </head>
 <body>
 <a href="/book/">Books</a>
-<t>    </t>
 <a href="/person/">People</a>
+<a href="/author/">Author</a>
+
 </body>
 </html>

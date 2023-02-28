@@ -10,7 +10,6 @@
     </style>
 </head>
 <body>
-<!-- Check if bookList is not empty -->
 <div th:if="${not #lists.isEmpty(bookList)}">
     <b>Books:</b>
     <br/>
@@ -25,7 +24,6 @@
     </table>
 </div>
 
-<!-- Show a message if bookList is empty -->
 <div th:if="${#lists.isEmpty(bookList)}">
     <p>No books found.</p>
 </div>
@@ -33,7 +31,3 @@
 <a th:href="@{/book/new}">Add a book</a>
 </body>
 </html>
-
-<!--<a th:href="@{/book/{id}(id=${book.id})}">-->
-<!--    <span th:text="${authorDAO.showName(book)} + ' - ' + ${book.getTitle()}"/>-->
-<!--</a>-->

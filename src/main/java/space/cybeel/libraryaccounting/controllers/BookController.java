@@ -33,7 +33,21 @@ public class BookController {
         this.bookDAO = bookDAO;
         this.personDAO = personDAO;
     }
-//todo выдача книг
+
+    @PostMapping("{bookId}/giveout")
+    public String giveOut(@PathVariable("bookId") int bookId,
+                          @ModelAttribute("person") Person person) {
+        issuedBookDAO.issue(person.getId(), bookId);
+        System.out.println(person.getId());
+        return "redirect:/book";
+    }
+
+    @PostMapping("{bookId}/giveback")
+    public String giveBack(@PathVariable("bookId") int id){
+        issuedBookDAO.release(id);
+
+        return "redirect:/book";
+    }
 
     @GetMapping("/{id}/edit")
     public String editPage(@PathVariable("id") int id, Model model) {

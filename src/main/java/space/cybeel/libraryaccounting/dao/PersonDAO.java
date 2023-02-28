@@ -118,6 +118,7 @@ public class PersonDAO extends DataAccesObject<Person> {
 
         person.setId(resultSet.getInt("id"));
         person.setFullName(resultSet.getString("fullname"));
+        person.setYearBorn(resultSet.getInt("yearBorn"));
 
         return person;
     }
