@@ -1,8 +1,10 @@
 package space.cybeel.libraryaccounting.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import space.cybeel.libraryaccounting.dao.AuthorDAO;
 import space.cybeel.libraryaccounting.dao.BookDAO;
@@ -13,12 +15,14 @@ import space.cybeel.libraryaccounting.dto.Book;
 import space.cybeel.libraryaccounting.dto.Person;
 import space.cybeel.libraryaccounting.util.BookInfoFormer;
 import space.cybeel.libraryaccounting.util.DTOList;
+import space.cybeel.libraryaccounting.util.validators.BookValidator;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/book")
 public class BookController {
+    private final BookValidator validator;
     private final IssuedBookDAO issuedBookDAO;
 
     private final AuthorDAO authorDAO;
@@ -27,7 +31,8 @@ public class BookController {
     private final PersonDAO personDAO;
 
     @Autowired
-    public BookController(IssuedBookDAO issuedBookDAO, AuthorDAO authorDAO, BookDAO bookDAO, PersonDAO personDAO) {
+    public BookController(BookValidator validator, IssuedBookDAO issuedBookDAO, AuthorDAO authorDAO, BookDAO bookDAO, PersonDAO personDAO) {
+        this.validator = validator;
         this.issuedBookDAO = issuedBookDAO;
         this.authorDAO = authorDAO;
         this.bookDAO = bookDAO;
@@ -38,12 +43,12 @@ public class BookController {
     public String giveOut(@PathVariable("bookId") int bookId,
                           @ModelAttribute("person") Person person) {
         issuedBookDAO.issue(person.getId(), bookId);
-        System.out.println(person.getId());
+
         return "redirect:/book";
     }
 
     @PostMapping("{bookId}/giveback")
-    public String giveBack(@PathVariable("bookId") int id){
+    public String giveBack(@PathVariable("bookId") int id) {
         issuedBookDAO.release(id);
 
         return "redirect:/book";
@@ -73,14 +78,24 @@ public class BookController {
 
     @PatchMapping({"/{id}", ""})
     public String edit(@PathVariable("id") int id,
-                       @ModelAttribute("book") Book book) {
+                       @ModelAttribute("book") @Valid Book book, BindingResult bindingResult) {
+        validator.validate(book, bindingResult);
+
+        if (bindingResult.hasErrors())
+            return "book/edit";
+
         bookDAO.update(id, book);
 
         return "redirect:/book";
     }
 
     @PostMapping({"/", ""})
-    public String add(@ModelAttribute("book") Book book) {
+    public String add(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult) {
+        validator.validate(book, bindingResult);
+
+        if (bindingResult.hasErrors())
+            return "book/new";
+
         bookDAO.save(book);
 
         return "redirect:/book";
@@ -124,8 +139,6 @@ public class BookController {
 
     @ModelAttribute
     public void defaultAttributes(Model model) {
-        model.addAttribute("issuedBookDAO", issuedBookDAO);
-        model.addAttribute("authorDAO", authorDAO);
         model.addAttribute("unknownAuthor", Author.UNKNOWN_AUTHOR);
         model.addAttribute("authorList", (DTOList<Author>) authorDAO.index());
     }

@@ -1,6 +1,5 @@
 package space.cybeel.libraryaccounting.dao;
 
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import space.cybeel.libraryaccounting.dto.Book;
 import space.cybeel.libraryaccounting.dto.IssuedBook;
@@ -14,7 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
-public class IssuedBookDAO extends DataAccesObject<IssuedBook> {
+public class IssuedBookDAO extends DataAccessObject<IssuedBook> {
     private final BookDAO bookDAO;
 
     private final PersonDAO personDAO;
@@ -25,29 +24,35 @@ public class IssuedBookDAO extends DataAccesObject<IssuedBook> {
         this.personDAO = personDAO;
     }
 
-    @SneakyThrows
     public void issue(int personId, int bookId) {
-        PreparedStatement statement =
-                connection.prepareStatement("INSERT INTO issuedBook VALUES(?,?)");
-        statement.setInt(1, personId);
-        statement.setInt(2, bookId);
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("INSERT INTO issuedBook VALUES(?,?)");
+            statement.setInt(1, personId);
+            statement.setInt(2, bookId);
 
-        statement.executeUpdate();
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    @SneakyThrows
     public void release(int bookId) {
-        PreparedStatement statement =
-                connection.prepareStatement("DELETE FROM issuedBook WHERE bookId=?");
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("DELETE FROM issuedBook WHERE bookId=?");
 
-        statement.setInt(1, bookId);
+            statement.setInt(1, bookId);
 
-        statement.executeUpdate();
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    @SneakyThrows
     public boolean isIssued(int bookId) {
+        try{
         PreparedStatement statement =
                 connection.prepareStatement("SELECT * FROM issuedBook WHERE bookId=?");
 
@@ -56,30 +61,42 @@ public class IssuedBookDAO extends DataAccesObject<IssuedBook> {
         ResultSet resultSet = statement.executeQuery();
 
         return resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    @SneakyThrows
     public int getIssuerId(int bookId) {
-        PreparedStatement statement =
-                connection.prepareStatement("SELECT personId FROM issuedBook WHERE bookId=?");
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("SELECT personId FROM issuedBook WHERE bookId=?");
 
-        statement.setInt(1, bookId);
-        ResultSet resultSet = statement.executeQuery();
-        resultSet.next();
+            statement.setInt(1, bookId);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
 
-        return resultSet.getInt("personId");
+            return resultSet.getInt("personId");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
-    @SneakyThrows
     public String getIssuerName(int bookId) {
-        PreparedStatement statement =
-                connection.prepareStatement("SELECT fullname FROM person WHERE id=(SELECT personId FROM issuedBook WHERE bookId=?)");
-        statement.setInt(1, bookId);
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("SELECT fullname FROM person WHERE id=(SELECT personId FROM issuedBook WHERE bookId=?)");
+            statement.setInt(1, bookId);
 
-        ResultSet resultSet = statement.executeQuery();
-        resultSet.next();
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
 
-        return resultSet.getString("fullname");
+            return resultSet.getString("fullname");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
 
@@ -116,7 +133,7 @@ public class IssuedBookDAO extends DataAccesObject<IssuedBook> {
     }
 
     @Override
-    public boolean isExists(int id) {
+    public boolean isExists(IssuedBook obj) {
         throw new UnsupportedOperationException();
     }
 

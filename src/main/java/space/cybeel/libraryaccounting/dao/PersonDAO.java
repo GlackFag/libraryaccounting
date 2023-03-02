@@ -1,6 +1,5 @@
 package space.cybeel.libraryaccounting.dao;
 
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import space.cybeel.libraryaccounting.dto.Person;
 import space.cybeel.libraryaccounting.util.DTOList;
@@ -9,11 +8,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class PersonDAO extends DataAccesObject<Person> {
+public class PersonDAO extends DataAccessObject<Person> {
     public PersonDAO(Connection connection) {
         super(connection);
     }
@@ -58,7 +56,7 @@ public class PersonDAO extends DataAccesObject<Person> {
 
     @Override
     public void save(Person person) {
-        try{
+        try {
             PreparedStatement statement =
                     connection.prepareStatement("INSERT INTO person(fullname, yearborn) VALUES(?, ?)");
 
@@ -66,7 +64,7 @@ public class PersonDAO extends DataAccesObject<Person> {
             statement.setInt(2, person.getYearBorn());
 
             statement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -102,15 +100,22 @@ public class PersonDAO extends DataAccesObject<Person> {
     }
 
     @Override
-    @SneakyThrows
-    public boolean isExists(int id) {
-        PreparedStatement statement =
-                connection.prepareStatement("SELECT * FROM person WHERE id=?");
+    public boolean isExists(Person person) {
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("SELECT id FROM person WHERE (fullname=? and yearborn=?) or id=?");
 
-        statement.setInt(1, id);
-        ResultSet resultSet = statement.executeQuery();
+            statement.setString(1, person.getFullName());
+            statement.setInt(2, person.getYearBorn());
+            statement.setInt(3, person.getId());
 
-        return resultSet.next();
+            ResultSet resultSet = statement.executeQuery();
+
+            return resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private static Person parsePerson(ResultSet resultSet) throws SQLException {

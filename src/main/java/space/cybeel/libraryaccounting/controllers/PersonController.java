@@ -91,7 +91,6 @@ public class PersonController {
 
     private void addShowAttributes(Person person, Model model){
         List<IssuedBook> issued = issuedBookDAO.index();
-        System.out.println(issued);
 
         issued.removeIf(x -> x.getIssuerId() != person.getId());
         authorDAO.initAuthors(issued);

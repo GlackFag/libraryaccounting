@@ -13,6 +13,7 @@
 <form th:method="POST" th:action="@{/book}" th:object="${book}">
     <label for="title" >Enter book title</label>
     <input type="text" id="title" name="title" th:field="${book.title}">
+    <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title error</div>
     <br/>
 
     <label for="author">Choose the author</label>
@@ -22,11 +23,11 @@
     </select>
     <br/>
 
-    <t1>Did not found the author?</t1>
+    <p>Did not found the author?</p>
     <a th:href="@{/author/new}">Add him</a>
     <br/>
 
-    <label for="year" th:field="*{year}">Enter year</label>
+    <label for="year" th:field="*{year}">Enter publication year</label>
     <input type="number" id="year" name="year">
     <br/>
     <input type="submit" value="Add a book">

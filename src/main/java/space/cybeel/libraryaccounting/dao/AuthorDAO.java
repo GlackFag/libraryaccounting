@@ -1,6 +1,5 @@
 package space.cybeel.libraryaccounting.dao;
 
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import space.cybeel.libraryaccounting.dto.Author;
@@ -15,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class AuthorDAO extends DataAccesObject<Author> {
+public class AuthorDAO extends DataAccessObject<Author> {
 
 
     @Autowired
@@ -27,8 +26,7 @@ public class AuthorDAO extends DataAccesObject<Author> {
         if (books.isEmpty())
             return;
         DTOList<Author> authors = (DTOList<Author>) index();
-
-        books.forEach(x -> x.setAuthor(authors.getByIdOrDefault(x.getId(), Author.UNKNOWN_AUTHOR)));
+        books.forEach(x -> x.setAuthor(authors.getByIdOrDefault(x.getAuthorId(), Author.UNKNOWN_AUTHOR)));
     }
 
     @Override
@@ -114,15 +112,21 @@ public class AuthorDAO extends DataAccesObject<Author> {
     }
 
     @Override
-    @SneakyThrows
-    public boolean isExists(int id) {
-        PreparedStatement statement =
-                connection.prepareStatement("SELECT * FROM author WHERE id=?");
+    public boolean isExists(Author author) {
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("SELECT * FROM author WHERE name=? or id=?");
 
-        statement.setInt(1, id);
-        ResultSet resultSet = statement.executeQuery();
+            statement.setString(1, author.getName());
+            statement.setInt(2, author.getId());
 
-        return resultSet.next();
+            ResultSet resultSet = statement.executeQuery();
+
+            return resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private static Author parseAuthor(ResultSet resultSet) throws SQLException {

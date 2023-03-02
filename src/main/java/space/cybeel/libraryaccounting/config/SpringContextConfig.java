@@ -1,12 +1,12 @@
 package space.cybeel.libraryaccounting.config;
 
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
@@ -14,9 +14,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
+import org.springframework.context.MessageSource;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Objects;
 
 @Configuration
@@ -59,9 +61,8 @@ public class SpringContextConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    @SneakyThrows
-    public Connection dataBaseConnection() {
-        loadDriver();
+    public Connection dataBaseConnection() throws SQLException {
+        loadPostgresDriver();
         return DriverManager.getConnection(
                 Objects.requireNonNull(environment.getProperty("db.url")),
                 Objects.requireNonNull(environment.getProperty("db.username")),
@@ -69,10 +70,18 @@ public class SpringContextConfig implements WebMvcConfigurer {
     }
 
 
-    private void loadDriver() {
+    private void loadPostgresDriver() {
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException ignored) {
         }
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:messages_en_US");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
     }
 }

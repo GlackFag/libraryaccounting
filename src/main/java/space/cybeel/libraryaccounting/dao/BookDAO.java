@@ -1,6 +1,5 @@
 package space.cybeel.libraryaccounting.dao;
 
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import space.cybeel.libraryaccounting.dto.Book;
@@ -14,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class BookDAO extends DataAccesObject<Book> {
+public class BookDAO extends DataAccessObject<Book> {
     @Autowired
     public BookDAO(Connection connection) {
         super(connection);
@@ -31,7 +30,7 @@ public class BookDAO extends DataAccesObject<Book> {
             statement.setInt(3, book.getYear());
 
             statement.executeUpdate();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -76,7 +75,7 @@ public class BookDAO extends DataAccesObject<Book> {
             resultSet.close();
 
             return list;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return Collections.emptyList();
@@ -84,39 +83,54 @@ public class BookDAO extends DataAccesObject<Book> {
 
 
     @Override
-    @SneakyThrows
     public void delete(int id) {
-        PreparedStatement statement =
-                connection.prepareStatement("DELETE FROM book WHERE id=?");
-        statement.setInt(1, id);
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("DELETE FROM book WHERE id=?");
+            statement.setInt(1, id);
 
-        statement.executeUpdate();
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    @SneakyThrows
+
     @Override
     public void update(int id, Book updated) {
-        PreparedStatement statement =
-                connection.prepareStatement("UPDATE book SET authorId = ?, title = ?, year = ? WHERE id = ?");
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("UPDATE book SET authorId = ?, title = ?, year = ? WHERE id = ?");
 
-        statement.setInt(1, updated.getAuthorId());
-        statement.setString(2, updated.getTitle());
-        statement.setInt(3, updated.getYear());
-        statement.setInt(4, updated.getId());
+            statement.setInt(1, updated.getAuthorId());
+            statement.setString(2, updated.getTitle());
+            statement.setInt(3, updated.getYear());
+            statement.setInt(4, updated.getId());
 
-        statement.executeUpdate();
+            statement.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
-    @SneakyThrows
-    public boolean isExists(int id) {
-        PreparedStatement statement =
-                connection.prepareStatement("SELECT * FROM book WHERE id=?");
+    public boolean isExists(Book book) {
+        try {
+            PreparedStatement statement =
+                    connection.prepareStatement("SELECT id FROM book WHERE (authorId=? and title=? and year=?) or id=?");
 
-        statement.setInt(1, id);
-        ResultSet resultSet = statement.executeQuery();
+            statement.setInt(1, book.getAuthorId());
+            statement.setString(2, book.getTitle());
+            statement.setInt(3, book.getYear());
+            statement.setInt(4, book.getId());
 
-        return resultSet.next();
+            ResultSet resultSet = statement.executeQuery();
+
+            return resultSet.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private Book parseBook(ResultSet resultSet) throws SQLException {
