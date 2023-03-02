@@ -103,11 +103,10 @@ public class PersonDAO extends DataAccessObject<Person> {
     public boolean isExists(Person person) {
         try {
             PreparedStatement statement =
-                    connection.prepareStatement("SELECT id FROM person WHERE (fullname=? and yearborn=?) or id=?");
+                    connection.prepareStatement("SELECT id FROM person WHERE fullname=? or id=?");
 
             statement.setString(1, person.getFullName());
-            statement.setInt(2, person.getYearBorn());
-            statement.setInt(3, person.getId());
+            statement.setInt(2, person.getId());
 
             ResultSet resultSet = statement.executeQuery();
 

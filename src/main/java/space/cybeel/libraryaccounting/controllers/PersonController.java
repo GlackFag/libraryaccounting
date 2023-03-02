@@ -1,16 +1,19 @@
 package space.cybeel.libraryaccounting.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import space.cybeel.libraryaccounting.dao.AuthorDAO;
-import space.cybeel.libraryaccounting.dao.BookDAO;
 import space.cybeel.libraryaccounting.dao.IssuedBookDAO;
 import space.cybeel.libraryaccounting.dao.PersonDAO;
 import space.cybeel.libraryaccounting.dto.IssuedBook;
 import space.cybeel.libraryaccounting.dto.Person;
 import space.cybeel.libraryaccounting.util.BookInfoFormer;
+import space.cybeel.libraryaccounting.util.validators.PersonValidator;
 
 import java.util.List;
 
@@ -18,17 +21,18 @@ import java.util.List;
 @RequestMapping("/person")
 public class PersonController {
     private final PersonDAO personDAO;
-    private final BookDAO bookDAO;
 
     private final IssuedBookDAO issuedBookDAO;
     private final AuthorDAO authorDAO;
 
+    private final PersonValidator validator;
+
     @Autowired
-    public PersonController(PersonDAO personDAO, BookDAO bookDAO, IssuedBookDAO issuedBookDAO, AuthorDAO authorDAO) {
+    public PersonController(PersonDAO personDAO, IssuedBookDAO issuedBookDAO, AuthorDAO authorDAO, PersonValidator validator) {
         this.personDAO = personDAO;
-        this.bookDAO = bookDAO;
         this.issuedBookDAO = issuedBookDAO;
         this.authorDAO = authorDAO;
+        this.validator = validator;
     }
 
     @GetMapping("/new")
@@ -58,7 +62,12 @@ public class PersonController {
     }
 
     @PostMapping({"/", ""})
-    public String add(@ModelAttribute("person") Person person) {
+    public String add(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
+        validate(person, bindingResult);
+
+        if (bindingResult.hasErrors())
+            return "person/new";
+
         personDAO.save(person);
 
         return "redirect:/person";
@@ -66,30 +75,35 @@ public class PersonController {
 
     @PatchMapping("/{id}")
     public String edit(@PathVariable("id") int id,
-                       @ModelAttribute("person") Person person){
+                       @ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
+        validate(person, bindingResult);
+
+        if (bindingResult.hasErrors())
+            return "person/edit";
+
         personDAO.update(id, person);
 
         return "redirect:/person";
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable int id){
+    public String delete(@PathVariable int id) {
         personDAO.delete(id);
 
         return "redirect:/person";
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model){
+    public String show(@PathVariable("id") int id, Model model) {
         Person person = personDAO.show(id);
-        if(person == null)
+        if (person == null)
             return "404";
 
         addShowAttributes(person, model);
         return "person/show";
     }
 
-    private void addShowAttributes(Person person, Model model){
+    private void addShowAttributes(Person person, Model model) {
         List<IssuedBook> issued = issuedBookDAO.index();
 
         issued.removeIf(x -> x.getIssuerId() != person.getId());
@@ -98,5 +112,11 @@ public class PersonController {
 
         model.addAttribute("issuedBookList", issued);
         model.addAttribute("person", person);
+    }
+
+    private void validate(Person person, Errors errors){
+        if (errors.hasErrors())
+            return;
+        validator.validate(person, errors);
     }
 }

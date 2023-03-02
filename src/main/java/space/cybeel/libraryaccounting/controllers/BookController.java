@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import space.cybeel.libraryaccounting.dao.AuthorDAO;
 import space.cybeel.libraryaccounting.dao.BookDAO;
@@ -79,7 +80,7 @@ public class BookController {
     @PatchMapping({"/{id}", ""})
     public String edit(@PathVariable("id") int id,
                        @ModelAttribute("book") @Valid Book book, BindingResult bindingResult) {
-        validator.validate(book, bindingResult);
+        validate(book, bindingResult);
 
         if (bindingResult.hasErrors())
             return "book/edit";
@@ -91,7 +92,7 @@ public class BookController {
 
     @PostMapping({"/", ""})
     public String add(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult) {
-        validator.validate(book, bindingResult);
+        validate(book, bindingResult);
 
         if (bindingResult.hasErrors())
             return "book/new";
@@ -141,6 +142,12 @@ public class BookController {
     public void defaultAttributes(Model model) {
         model.addAttribute("unknownAuthor", Author.UNKNOWN_AUTHOR);
         model.addAttribute("authorList", (DTOList<Author>) authorDAO.index());
+    }
+
+    private void validate(Book book, Errors errors){
+        if (errors.hasErrors())
+            return;
+        validator.validate(book, errors);
     }
 
     private interface Constants {

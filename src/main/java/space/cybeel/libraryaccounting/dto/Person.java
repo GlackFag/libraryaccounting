@@ -12,13 +12,13 @@ import lombok.ToString;
 @ToString
 public class Person extends DataTransferObject{
     @NotNull
-    @Size(min = 5, max = 150)
+    @Size(min = 5, max = 150, message = "Name should be between 5 and 150")
     @Getter
     @Setter
     private String fullName;
 
-    @Min(1850)
-    @Max(2023)
+    @Min(value = 1850, message = "You birth year should be grater or equal 1850")
+    @Max(value = 2023, message = "You birth year should be lower or equal 2023")
     @Getter
     @Setter
     private int yearBorn;

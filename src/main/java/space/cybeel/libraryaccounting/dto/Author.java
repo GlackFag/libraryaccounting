@@ -1,8 +1,10 @@
 package space.cybeel.libraryaccounting.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 @ToString
 public class Author extends DataTransferObject{
@@ -21,6 +23,8 @@ public class Author extends DataTransferObject{
 
     @Getter
     @Setter
+    @NotEmpty
+    @Length(min = 2, message = "Name should be at least 2 characters")
     private String name;
 
     @Getter

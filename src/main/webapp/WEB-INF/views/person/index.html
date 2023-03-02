@@ -6,17 +6,15 @@
 </head>
 <body>
 <div th:if="${not #lists.isEmpty(personList)}">
-    <ul>
-        <li>
-            <a th:each="person : ${personList}"
-               th:href="@{/person/{id} (id=${person.id})}">
-                <span th:text="${person.fullName}"></span>
-            </a>
-            <br/>
-        </li>
-    </ul>
+    <table>
+        <tr th:each="person : ${personList}">
+            <td>
+                <a th:href="@{/person/{id} (id=${person.id})}" th:text="${person.fullName}"></a>
+            </td>
+        </tr>
+    </table>
 </div>
-<!--todo replace <table> with <ul>-->
+
 <div th:if="${#lists.isEmpty(personList)}">
     <span>No people found.</span>
 </div>

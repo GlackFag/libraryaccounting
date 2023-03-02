@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.Connection;
 import java.util.List;
 
-public abstract class DataAccesObject<T> {
+public abstract class DataAccessObject<T> {
     protected Connection connection;
 
     @Autowired
-    public DataAccesObject(Connection connection) {
+    public DataAccessObject(Connection connection) {
         this.connection = connection;
     }
 
@@ -23,5 +23,5 @@ public abstract class DataAccesObject<T> {
 
     public abstract void update(int id, T updated);
 
-    public abstract boolean isExists(int id);
+    public abstract boolean isExists(T obj);
 }
