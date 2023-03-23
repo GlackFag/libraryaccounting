@@ -16,18 +16,20 @@
     <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title error</div>
     <br/>
 
-    <label for="author">Change author</label>
-    <select id="author" th:object="${authorList}" th:field="${book.authorId}">
-        <option th:each="author : ${authorList}" th:value="${author.id}"
-                th:text="${author.name}"/>
-    </select>
+    <div th:object="${newAuthor}">
+        <label for="author">Change author</label>
+        <select id="author" th:object="${authorList}" th:field="${newAuthor.id}">
+            <option th:each="author : ${authorList}" th:value="${author.getId()}"
+                    th:text="${author.getName()}"/>
+        </select>
+    </div>
     <br/>
 
     <p>Did not found the author?</p>
     <a th:href="@{/author/new}">Add him</a>
     <br/>
 
-    <label for="year" >Enter publication year</label>
+    <label for="year">Enter publication year</label>
     <input type="number" id="year" name="year" th:field="*{year}">
     <br/>
     <input type="submit" value="Save changes">

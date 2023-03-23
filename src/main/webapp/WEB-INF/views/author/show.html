@@ -19,8 +19,7 @@
     <tr th:each="book : ${bookList}">
         <td>
             <a th:href="@{/book/{id}(id=${book.id})}">
-                <span th:text="${book.getFormedInfo().replaceAll('\\d', '')}"/>
-<!--                todo убрать имя из отоборажение названия-->
+                <span th:text="${book.getFormedInfo()}"/>
             </a>
         </td>
     </tr>

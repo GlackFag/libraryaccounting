@@ -11,8 +11,8 @@
 </head>
 <body>
 <form th:method="POST" th:action="@{/author}" th:object="${author}">
-    <label for="title">Enter full author's name</label>
-    <input type="text" id="title" name="title" th:field="${author.name}">
+    <label for="name">Enter full author's name</label>
+    <input type="text" id="name" name="title" th:field="${author.name}">
     <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
     <br/>
     <input type="submit" value="Add an author">

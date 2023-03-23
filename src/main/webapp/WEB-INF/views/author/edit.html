@@ -10,7 +10,7 @@
   </style>
 </head>
 <body>
-<form th:method="PATCH" th:action="@{/author}" th:object="${author}">
+<form th:method="PATCH" th:action="@{/author/{id}/edit (id=${author.id})}" th:object="${author}">
   <label for="title">Enter full author's name</label>
   <input type="text" id="title" name="title" th:field="${author.name}">
   <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>

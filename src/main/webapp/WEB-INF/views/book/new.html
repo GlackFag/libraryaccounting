@@ -16,11 +16,13 @@
     <div style="color:red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title error</div>
     <br/>
 
-    <label for="author">Choose the author</label>
-    <select id="author" th:object="${authorList}" th:field="${book.authorId}">
-        <option th:each="author : ${authorList}" th:value="${author.id}"
-                th:text="${author.name}"/>
-    </select>
+    <div th:object="${newAuthor}">
+        <label for="author">Change author</label>
+        <select id="author" th:object="${authorList}" th:field="${newAuthor.id}">
+            <option th:each="author : ${authorList}" th:value="${author.getId()}"
+                    th:text="${author.getName()}"/>
+        </select>
+    </div>
     <br/>
 
     <p>Did not found the author?</p>

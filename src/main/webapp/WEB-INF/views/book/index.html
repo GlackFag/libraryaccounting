@@ -16,8 +16,8 @@
     <table>
         <tr th:each="book : ${bookList}">
             <td>
-                <a th:href="@{/book/{id}(id=${book.id})}">
-                    <span th:text="${authorList.getByIdOrDefault(book.authorId, unknownAuthor).getName()} + ' - ' + ${book.getTitle()}"/>
+                <a th:href="@{/book/{id}(id=${book.getId()})}">
+                    <span th:text="${book.formedInfo}"/>
                 </a>
             </td>
         </tr>
