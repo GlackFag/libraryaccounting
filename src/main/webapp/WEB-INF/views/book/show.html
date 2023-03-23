@@ -15,7 +15,7 @@
 <hr/>
 <span th:text="${bookAvailability}"></span>
 
-<div th:unless="${isIssued}">
+<div th:unless="${isTaken}">
     <form th:method="POST" th:object="${person}"
           th:action="@{/book/{bookId}/giveout (bookId = ${book.id})}">
         <label for="person">Choose a person</label>
@@ -27,7 +27,7 @@
     </form>
 </div>
 
-<div th:if="${isIssued}">
+<div th:if="${isTaken}">
     <form th:method="POST" th:action="@{/book/{bookId}/giveback (bookId=${book.id})}">
         <input value="Give back" type="submit">
     </form>

@@ -27,7 +27,17 @@
 <div th:if="${#lists.isEmpty(bookList)}">
     <p>No books found.</p>
 </div>
+
 <hr/>
-<a th:href="@{/book/new}">Add a book</a>
+
+<div>
+    <a th:href="@{/book/new}">Add a book</a>
+    <br/>
+    <a th:href="@{/book(p=${pageIndex}, sort=${!doSort})}">Switch sort</a>
+    <br/>
+    <a th:if="${hasNextPage}" th:href="@{/book(p=${pageIndex + 1}, sort=${doSort})}">Next Page
+        <br/></a>
+    <a th:if="${pageIndex > 0}" th:href="@{/book(p=${pageIndex - 1}, sort=${doSort})}">Previous page</a>
+</div>
 </body>
 </html>

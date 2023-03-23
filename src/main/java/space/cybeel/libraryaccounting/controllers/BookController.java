@@ -21,6 +21,7 @@ public class BookController {
 
     private final BookService bookService;
 
+    public static final int PAGE_SIZE = 2;
 
     @Autowired
     public BookController(AuthorService authorService, BookService bookService) {
@@ -65,10 +66,17 @@ public class BookController {
     }
 
     @GetMapping({"/", ""})
-    public String index(Model model) {
-        List<Book> books = bookService.indexList();
+    public String index(@RequestParam(required = false, name = "p", defaultValue = "0") int page,
+                        @RequestParam(required = false, name = "sort", defaultValue = "false") boolean sortByYear,
+                        Model model) {
+        List<Book> books = bookService.indexList(page, sortByYear);
+        boolean hasNextPage = !bookService.findPage(page + 1).isEmpty();
 
         model.addAttribute("bookList", books);
+        model.addAttribute("pageIndex", page);
+        model.addAttribute("doSort", sortByYear);
+        model.addAttribute("hasNextPage", hasNextPage);
+
 
         return "book/index";
     }
